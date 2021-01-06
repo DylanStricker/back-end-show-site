@@ -1,5 +1,6 @@
 #!/bin/bash
-
+EMAIL="fug@fug.com"
+PASSWORD=":D:D:D"
 API="http://localhost:4741"
 URL_PATH="/sign-in"
 
