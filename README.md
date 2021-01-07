@@ -6,6 +6,7 @@ Back-End for the site made to log shows
 * Mongoose/MongoDB
 * Passport
 * bcrypt
+* Express
 
 ### API Documentation
 
