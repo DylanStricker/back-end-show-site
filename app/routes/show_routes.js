@@ -33,8 +33,8 @@ router.post('/shows', requireToken, removeBlanks, (req, res, next) => {
 
 // INDEX
 // GET /shows
-router.get('/shows', requireToken, (req, res, next) => {
-  Show.find({ owner: req.user._id })
+router.get('/shows', (req, res, next) => {
+  Show.find()
 
     .then(shows => res.json({
       shows: shows
@@ -43,7 +43,7 @@ router.get('/shows', requireToken, (req, res, next) => {
 })
 // SHOW
 // GET /shows/:id
-router.get('/shows/:id', requireToken, (req, res, next) => {
+router.get('/shows/:id', (req, res, next) => {
   const id = req.params.id
 
   Show.findById(id)

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const showSchema = require('./show')
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -10,6 +10,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  shows: [
+    {
+
+      type: mongoose.Schema.Types.ObjectId,
+
+      ref: 'Show'
+    }
+  ],
   token: String
 }, {
   timestamps: true,

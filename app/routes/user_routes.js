@@ -16,7 +16,7 @@ const BadParamsError = errors.BadParamsError
 const BadCredentialsError = errors.BadCredentialsError
 
 const User = require('../models/user')
-
+const Show = require('./../models/show')
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
 // it will also set `res.user`
@@ -137,5 +137,48 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
     .then(() => res.sendStatus(204))
     .catch(next)
 })
+
+router.get('/users/:userId/shows', (req, res, next) => {
+  Show.find({ owner: req.user })
+
+    .then(shows => res.json({ shows }))
+    .catch(next)
+})
+// add show to user
+  .patch('/users/:userId/shows', requireToken, (req, res, next) => {
+  // pull user ID from url
+    const userId = req.params.userId
+
+    const showId = req.body.user.showId
+    // find the user first
+    User.findById(userId)
+      .then(errors.handle404)
+      .then(user => {
+        // add show id to the user's array of shows
+        user.shows.push(showId)
+        // save changes
+        return user.save()
+      })
+      // success! 204 no Content
+      .then(() => res.sendStatus(204))
+      .catch(next)
+  })
+// remove show from a user
+  .delete('/users/:userId/shows', requireToken, (req, res, next) => {
+    // pull userId from url
+    const userId = req.params.userId
+    // extract the showId from the incoming data (req.body)
+    const showId = req.body.user.showId
+    // find the user first
+    User.findById(userId)
+      .then(errors.handle404)
+      .then(user => {
+      // select the show by its id and remove it from the user's shows
+        user.shows.id(showId).remove()
+
+        // save changes
+        return user.save()
+      })
+  })
 
 module.exports = router

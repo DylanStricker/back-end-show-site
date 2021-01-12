@@ -1,5 +1,4 @@
-# sh curl-scripts/index.sh
-
+# sh curl-scripts/create.sh
 curl 'http://localhost:4741/shows' \
   --include \
   --request POST \
@@ -14,3 +13,5 @@ curl 'http://localhost:4741/shows' \
       "description": "'"${DESC}"'"
     }
   }'
+
+echo

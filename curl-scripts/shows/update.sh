@@ -12,3 +12,5 @@ curl "http://localhost:4741/shows/${ID}" \
       "description": "'"${DESC}"'"
     }
   }'
+
+echo
