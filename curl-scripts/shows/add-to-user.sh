@@ -5,9 +5,7 @@ curl "http://localhost:4741/users/${USER_ID}/shows" \
   --header "Content-Type: application/json" \
   --header "Authorization: Bearer ${TOKEN}" \
   --data '{
-    "user": {
-      "showId": "'"${SHOW_ID}"'"
-    }
-  }'
+    "showId": "'"${SHOW_ID}"'"
+    }'
 
 echo

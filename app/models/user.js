@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema({
   },
   shows: [
     {
-
       type: mongoose.Schema.Types.ObjectId,
 
       ref: 'Show'

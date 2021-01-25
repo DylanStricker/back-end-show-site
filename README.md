@@ -25,12 +25,8 @@ Terminal commands available to use all are prefaced with `npm run`
 
 ## API
 
-Use this as the basis for your own API documentation. Add a new third-level
-heading for your custom entities, and follow the pattern provided for the
-built-in user authentication documentation.
-
 Scripts are included in [`curl-scripts`](curl-scripts) to test built-in actions.
-Add your own scripts to test your custom API.
+
 
 ### Authentication
 
@@ -40,6 +36,7 @@ Add your own scripts to test your custom API.
 | POST   | `/sign-in`             | `users#signin`    |
 | PATCH  | `/change-password/` | `users#changepw`  |
 | DELETE | `/sign-out/`        | `users#signout`   |
+
 
 #### POST /sign-up
 
@@ -58,7 +55,7 @@ curl --include --request POST http://localhost:4741/sign-up \
 ```
 
 ```sh
-curl-scripts/sign-up.sh
+curl-scripts/auth/sign-up.sh
 ```
 
 Response:
@@ -91,7 +88,7 @@ curl --include --request POST http://localhost:4741/sign-in \
 ```
 
 ```sh
-curl-scripts/sign-in.sh
+curl-scripts/auth/sign-in.sh
 ```
 
 Response:
@@ -126,7 +123,7 @@ curl --include --request PATCH http://localhost:4741/change-password/ \
 ```
 
 ```sh
-TOKEN=33ad6372f795694b333ec5f329ebeaaa curl-scripts/change-password.sh
+TOKEN=33ad6372f795694b333ec5f329ebeaaa curl-scripts/auth/change-password.sh
 ```
 
 Response:
@@ -145,7 +142,135 @@ curl --include --request DELETE http://localhost:4741/sign-out/ \
 ```
 
 ```sh
-TOKEN=33ad6372f795694b333ec5f329ebeaaa curl-scripts/sign-out.sh
+TOKEN=33ad6372f795694b333ec5f329ebeaaa curl-scripts/auth/sign-out.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 204 No Content
+```
+
+### Authentication
+
+| Verb   | URI Pattern            | Controller#Action |
+|--------|------------------------|-------------------|
+| POST   | `/shows`             | `shows#index`    |
+| GET   | `/shows`             | `shows#get`    |
+| PATCH  | `/shows/:id`         | `shows#update`  |
+| DELETE | `/shows/:id`        | `shows#destroy`   |
+
+
+#### POST /sign-up
+
+Request:
+
+```sh
+curl --include "http://localhost:4741/shows" \
+
+echo
+```
+
+```sh
+curl-scripts/shows/index.sh
+```
+
+
+#### POST /shows
+
+Request:
+
+```sh
+curl 'http://localhost:4741/shows' \
+  --include \
+  --request POST \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer ${TOKEN}" \
+  --data '{
+    "show": {
+      "title": "'"${TITLE}"'",
+      "director": "'"${DIRECTOR}"'",
+      "rating": "'"${RATING}"'",
+      "releaseDate": "'"${RELEASEDATE}"'",
+      "description": "'"${DESC}"'"
+    }
+  }'
+
+echo
+
+```
+
+```sh
+TOKEN=33ad6372f795694b333ec5f329ebeaaa TITLE="avatar or smn" DIRECTOR="steven shpielberg i think" curl-scripts/shows/update.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+  "show": {
+    "id": 53ad637ff795634b334ec5g329ebdfd,
+    "title": "avatar or smn",
+    "director": "steven shpielberd i think"
+    "rating": null,
+    "releaseDate": "null",
+    "description": "null"
+  }
+}
+```
+
+#### PATCH /shows/:id
+
+Request:
+
+```sh
+curl "http://localhost:4741/shows/${ID}" \
+  --include \
+  --request PATCH \
+  --header "Content-Type: application/json" \
+  --header "Authorization: Bearer ${TOKEN}" \
+  --data '{
+    "show": {
+      "title": "'"${TITLE}"'",
+      "director": "'"${DIRECTOR}"'",
+      "rating": "'"${RATING}"'",
+      "releaseDate": "'"${RELEASEDATE}"'",
+      "description": "'"${DESC}"'"
+    }
+  }'
+
+echo
+
+```
+
+```sh
+TOKEN=33ad6372f795694b333ec5f329ebeaaa id=53ad637ff795634b334ec5g329ebdfd TITLE="not avatar or smn" DIRECTOR="not steven shpielberg i think" curl-scripts/shows/update.sh
+```
+
+Response:
+
+```md
+HTTP/1.1 204 No Content
+```
+
+#### DELETE /shows/:id
+
+Request:
+
+```sh
+curl "http://localhost:4741/shows/${ID}" \
+  --include \
+  --request DELETE \
+  --header "Authorization: Bearer ${TOKEN}" \
+
+echo
+```
+
+```sh
+TOKEN=33ad6372f795694b333ec5f329ebeaaa curl-scripts/shows/destroy.sh
 ```
 
 Response:
@@ -156,7 +281,9 @@ HTTP/1.1 204 No Content
 
 ### Planning and Organization #
 1. Created ERD and user stories.
-
+2. Created auth routes
+3. Created show routes
+4. Handle front-end
 ### User Stories #
 
 * I want to be able to sign up
@@ -178,4 +305,8 @@ Went digital with this Wireframe, my physical ones didn't turn out that well so
 
 ### Future Plans, Problems to solve #
 
-Add everything lol
+* Add personal user show list
+* Add features to allow for dynamic show adding to that list
+* Add features to allow for dynamic show removal from that list
+* Stylize the Site
+* add user reviews

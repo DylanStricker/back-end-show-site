@@ -21,6 +21,7 @@ const Show = require('./../models/show')
 // so that a token MUST be passed for that route to be available
 // it will also set `res.user`
 const requireToken = passport.authenticate('bearer', { session: false })
+const customErrors = require('../../lib/custom_errors')
 
 // instantiate a router (mini app that only handles routes)
 const router = express.Router()
@@ -139,46 +140,67 @@ router.delete('/sign-out', requireToken, (req, res, next) => {
 })
 
 router.get('/users/:userId/shows', (req, res, next) => {
-  Show.find({ owner: req.user })
+  Show.find({ users: req.params.userId })
 
-    .then(shows => res.json({ shows }))
+    .then(shows => {
+      // console.log(shows, 'router.get')
+      res.json({ shows })
+    })
     .catch(next)
 })
 // add show to user
-  .patch('/users/:userId/shows', requireToken, (req, res, next) => {
-  // pull user ID from url
-    const userId = req.params.userId
-
-    const showId = req.body.user.showId
-    // find the user first
-    User.findById(userId)
-      .then(errors.handle404)
-      .then(user => {
-        // add show id to the user's array of shows
-        user.shows.push(showId)
-        // save changes
-        return user.save()
-      })
-      // success! 204 no Content
-      .then(() => res.sendStatus(204))
-      .catch(next)
-  })
+router.patch('/users/:userId/shows', (req, res, next) => {
+// extract the id from our route parameters (req.params)
+  const userId = req.params.userId
+  // extract the showId from the incoming data (req.body)
+  const showId = req.body.user.showId
+  // find the user first
+  User.findById(userId)
+    .then(customErrors.handle404)
+    .then(user => {
+    // add show id to the user's array of show references
+      user.shows.push(showId)
+      // save changes
+      return user.save()
+    })
+    // now find the show ( the other resource in this relationship)
+    .then(() => Show.findById(showId))
+    .then(show => {
+    // add the user Id to the show's array of user references
+      show.users.push(userId)
+      // save changes
+      return show.save()
+    })
+    // respond with a successful 204 no content
+    .then(() => res.sendStatus(204))
+    .catch(next)
+})
 // remove show from a user
-  .delete('/users/:userId/shows', requireToken, (req, res, next) => {
-    // pull userId from url
-    const userId = req.params.userId
-    // extract the showId from the incoming data (req.body)
-    const showId = req.body.user.showId
-    // find the user first
-    User.findById(userId)
-      .then(errors.handle404)
-      .then(user => {
-      // select the show by its id and remove it from the user's shows
-        user.shows.id(showId).remove()
+router.delete('/users/:userId/shows', (req, res, next) => {
+  const userId = req.params.userId
+  // extract the showId from the incoming data (req.body)
+  const showId = req.body.user.showId
+  // find the user first
+  User.findById(userId)
+    .then(customErrors.handle404)
+    .then(user => {
+    // select the show by their id and remove them from the user's shows
+      user.shows.id(showId).remove()
 
-        // save changes
-        return user.save()
-      })
-  })
+      // save changes
+      return user.save()
+    })
+  // now find the show ( the other resource in this relationship)
+    .then(() => Show.findById(showId))
+    .then(show => {
+    // select the user by it's id and remove it from the shows users
+      show.users.id(userId).remove()
+      // save changes
+      return show.save()
+    })
+    // respond with a successful 204 no content
+    .then(() => res.sendStatus(204))
+    .catch(next)
+})
 
 module.exports = router

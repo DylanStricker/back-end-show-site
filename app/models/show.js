@@ -12,15 +12,19 @@ const showSchema = new mongoose.Schema({
     type: Number,
     required: false
   },
+  desc: {
+    type: String,
+    required: false
+  },
   releaseDate: {
     type: Date,
     required: false
   },
-  description: {
-    type: Number,
-    required: false
-  },
   owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  users: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }

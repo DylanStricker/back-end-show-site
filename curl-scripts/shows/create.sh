@@ -1,4 +1,3 @@
-# sh curl-scripts/create.sh
 curl 'http://localhost:4741/shows' \
   --include \
   --request POST \

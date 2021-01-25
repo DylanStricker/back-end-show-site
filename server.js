@@ -26,6 +26,10 @@ const clientDevPort = 7165
 // establish database connection
 // use new version of URL parser
 // use createIndex instead of deprecated ensureIndex
+mongoose.set('useNewUrlParser', true)
+mongoose.set('useFindAndModify', false)
+mongoose.set('useCreateIndex', true)
+mongoose.set('useUnifiedTopology', true)
 mongoose.connect(db, {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -67,7 +71,7 @@ app.use(errorHandler)
 
 // run API on designated port (4741 in this case)
 app.listen(port, () => {
-  console.log('listening on port ' + port)
+  // console.log('listening on port ' + port)
 })
 
 // needed for testing
